@@ -1,0 +1,9 @@
+packages/*
+*.dll
+*.exe
+*.bin
+*.mdb
+*.so
+*.o
+~*
+*~
