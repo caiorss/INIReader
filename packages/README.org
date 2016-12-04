@@ -1,0 +1,4 @@
+- Don't add the directories or another files of this directory to the
+  source control.
+
+- The NuGet packages are installed here.
