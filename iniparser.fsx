@@ -17,11 +17,22 @@ type INIValue =
     | INIEmpty 
 
 
-type INIData = {
-    section: string ;
-    payload: INIKey * INIValue) list; 
-    }
+type INIData = Map<string, Map<INIKey,INIValue>>
 
+
+
+let extracts p str =
+    match run p str with
+    | Success (result, _, _)  ->  result
+    | Failure (msg,    _, _)  ->  failwith msg
+
+
+let extract2 p str =
+    match run p str with
+    | Success (result, _, _)  ->  Some result
+    | Failure (msg,    _, _)  ->  None
+
+    
 
 // Parses text surrounded by zero or more white spaces    
 let ws p = spaces >>. p .>> spaces
@@ -53,7 +64,7 @@ let anyText2 s =
                   ) s
     
 
-let parseSection<'T> : Parser<string, 'T> = squareBrackets identifier
+let parseSection<'T> : Parser<string, 'T> = betweenSquareBrackets identifier
 
 
 (*     
@@ -68,13 +79,6 @@ let quoted<'T> : Parser<string,'T> =
 
 let comment<'T> : Parser<unit, 'T> =
     pstring "#" >>. skipRestOfLine true ;;
-
-
-
-let testData1 = "hosts = 192.168.12 "
-let testData2 = "refs = [(Nuget.Core, 1.12), (Fsharp.Charting, 1.23)]"
-let testData3 = "mydata = [\"hello world\", something, nothing, 2000]"
-
 
 let parseINIString<'T> : Parser<INIValue, 'T> =
     quoted <|> anyText2 |>> INIString
@@ -101,37 +105,19 @@ let parseINIValue<'T> : Parser<INIValue, 'T> =
 let parseKV<'T> : Parser<string * INIValue, 'T> =
     identifier .>> wstr "=" .>>. parseINIValue 
 
-let pcomment<'T> : Parser<char, 'T> =
-    pchar '#'
-    >>. skipManySatisfy (fun c -> c <> '\n' || c <> '\r')
-    >>. (pchar '\n' <|> pchar '\r')
-
-
-let peol<'T> : Parser<char, 'T> = pcomment <|> (pchar '\n' <|> pchar '\r')
-
-let applyPlines pstatement = many (spaces >>. pstatement .>> peol) .>> eof
-
-let parseSection<'T> : Parser<INIData, 'T> =
+  
+let parseSection<'T> :  Parser<(string * Map<string,INIValue>),'T> =
     betweenSquareBrackets identifier
-    .>>. many (parseKV .>> spaces)
-    |>> fun (a, b) -> { section = a ; payload = b}
+    .>>. (many (skipMany comment >>. parseKV .>> spaces) |>> Map.ofList)
 
-
-let parseSection2<'T> : Parser<INIData, 'T> =
-    betweenSquareBrackets identifier
-    .>>. many (skipMany comment >>. parseKV .>> spaces)
-    |>> fun (a, b) -> { section = a ; payload = b}
               
-let parseINI<'T> : Parser<(INIData list), 'T> =
-    applyPlines parseSection2
+let parseINI<'T> : Parser<INIData, 'T> =
+    many parseSection |>> Map.ofList 
 
-// Doesn't work.
-let parseINISection<'T> : Parser<(INIData list), 'T> =
-    many ( (skipMany <| optional pcomment)
-           >>. betweenSquareBrackets identifier
-           .>>. many (parseKV .>> spaces)
-           |>> fun (a, b) -> { section = a ; payload = b}
-           )
+
+let testData1 = "hosts = 192.168.12 "
+let testData2 = "refs = [(Nuget.Core, 1.12), (Fsharp.Charting, 1.23)]"
+let testData3 = "mydata = [\"hello world\", something, nothing, 2000]"
 
 
 let testDataSection = """
@@ -143,7 +129,7 @@ target     = exe
 
 # The framework is
 # - net45 - for .NET 4.5 
-  # - net40 - for .NET 4.0
+# - net40 - for .NET 4.0
 # - net30 - for .NET 3.0
 framework  = net45
 
