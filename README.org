@@ -1,0 +1,36 @@
+#+TITLE: Iniparser 
+
+* Iniparser 
+** Overview 
+
+Motivation: 
+
+The ini configuration format popularized by Windows is more human
+readable and simple to write and read than XML and is more suitable
+to write simple configuration like server configuration, deployment
+settings and Unix-like configuration files. 
+
+
+Iniparser is a parser for a ini-like configuration file of syntax: 
+
+#+BEGIN_SRC conf 
+[server]
+host = 0.0.0.0 # host the server will listen to.
+port = 8080 
+path = /home/arch/data 
+name = "John McArthur"
+
+[references]
+# commentary 
+dependencies = [(Nuget.Core 10.23) (FParsec 0.945)]
+values = [10 20 30 40]
+# comment lines 
+#
+target = net45
+
+tuple = (10 hello 20.100.200 "hello world")
+
+emptyField = 
+#+END_SRC 
+
+
