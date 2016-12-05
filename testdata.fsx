@@ -32,3 +32,8 @@ references = [ (NuGet.Core 0.9.1) (FParsec 1.0.2) (OxyPlot _)]
 version    = 1.2.3
 empty      = 
 """
+
+let testData1 = "hosts = 192.168.12 "
+let testData2 = "refs = [(Nuget.Core, 1.12), (Fsharp.Charting, 1.23)]"
+let testData3 = "mydata = [\"hello world\", something, nothing, 2000]"
+
