@@ -62,6 +62,10 @@ pkg-install:
 pkg-rm:
 	rm -rf packages/INIReader.1.0.0
 
+# load installed nuget package into repl. 
+pkg-loader:
+	fsi --use:pkgloader.fsx
+
 clean:
 	rm -rf $(BIN)/*
 
