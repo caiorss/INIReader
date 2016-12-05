@@ -18,7 +18,9 @@ INCLUDES   := packages/FParsec.1.0.2/lib/net40-client
 
 
 # F# compiler 
-FSC := fsc
+FSC   := fsc
+NUGET := nuget.exe
+
 
 # Output directory with compiled code 
 BIN := bin
@@ -36,6 +38,10 @@ $(target): $(src)
                --target:$(TYPE) --out:$(target) \
                $(addprefix -I:,$(INCLUDES)) \
                $(addprefix -r:, $(ASSEMBLIES))
+
+# Dependencies necessary to compile
+deps:
+	$(NUGET) install FParsec -OutputDirectory packages -Version 1.0.2
 
 clean:
 	rm -rf $(BIN)/*
