@@ -4,7 +4,6 @@
 #r "FParsecCS.dll"
 #endif 
 
-
 namespace INIReader 
 
 open System
@@ -26,8 +25,8 @@ module INIAst =
 
     (* ===========================  Primitive Parsers  ================================== *)
 
-module PrimitiveParser =
-    
+module internal PrimitiveParsers =
+    open INIAst 
 
     // Parses text surrounded by zero or more white spaces    
     let ws p = spaces >>. p .>> spaces
@@ -58,24 +57,15 @@ module PrimitiveParser =
                       ) s
 
 
-
-
-    (* ===========================  INIParser ====================================== *)
-
-module INIParser = 
-    open INIAst
-    open PrimitiveParser
-    // open FParsec
-
     let parseQuoted<'T> : Parser<string,'T> =  pchar '"' >>. manySatisfy (fun c -> c <> '"') .>> pchar '"'
 
-    let extracts p str =
+    let extractFail p str =
         match run p str with
         | Success (result, _, _)  ->  result
         | Failure (msg,    _, _)  ->  failwith msg
 
 
-    let extract2 p str =
+    let extractOption p str =
         match run p str with
         | Success (result, _, _)  ->  Some result
         | Failure (msg,    _, _)  ->  None
@@ -115,10 +105,21 @@ module INIParser =
     let parseSection<'T> :  Parser<(string * Map<string, INIValue>),'T> =
         betweenSquareBrackets identifier .>>. (many (skipMany comment >>. parseKV .>> spaces) |>> Map.ofList)
 
+
+module INIParser =
+    // open FParsec
+    open INIAst 
+    open PrimitiveParsers
        
     let parseINI<'T> : Parser<INIData, 'T> =   many parseSection |>> Map.ofList
 
+    let read: string -> INIData =
+        fun s -> extractFail parseINI s 
 
+    let read2opt: string -> INIData option =
+        fun s -> extractOption parseINI s 
+
+    
                   
 // [<EntryPoint>]
 // let main argv =
