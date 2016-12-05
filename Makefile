@@ -48,5 +48,20 @@ deps:
 loader: all
 	fsi --use:loader.fsx
 
+# Make Nuget package 
+pkg: all 
+	nuget pack Package.nuspec
+
+# Show Nuget package 
+pkg-show: 
+	unzip -l INIReader.1.0.0.nupkg
+
+pkg-install:
+	nuget.exe install INIReader -Source ${CURDIR} -o ./packages
+
+pkg-rm:
+	rm -rf packages/INIReader.1.0.0
+
 clean:
 	rm -rf $(BIN)/*
+
