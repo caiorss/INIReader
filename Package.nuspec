@@ -20,6 +20,8 @@
 
   <files>
     <file src="bin/Debug/INIReader.dll" target="lib/net45" />
+    <file src="bin/Debug/INIReader.XML" target="lib/net45" />
+    <file src="bin/Debug/INIReader.dll.mdb" target="lib/net45" />        
     <file src="README.org" target="" />
   </files>
 </package>
