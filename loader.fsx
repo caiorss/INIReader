@@ -5,7 +5,8 @@
 #r "FParsec.dll" 
 #r "FParsecCS.dll"
 
-#r "bin/INIReader.dll"
+// #r "bin/INIReader.dll"
+#load "INIReader.fs" 
 
 open FParsec
 open INIReader
@@ -42,6 +43,8 @@ projectName = helloWorld
 target     = exe
 framework  = net45
 references = [ (NuGet.Core 0.9.1) (FParsec 1.0.2) (OxyPlot _)]
+names      = [ package1 package10.2 "package 100" 300 500 ]
+atuple     = (100 "hello world" eggs nuts milk shake)
 version    = 1.2.3
 empty      = 
 """
@@ -71,4 +74,8 @@ let testParse2 () = run INIReader.INIParser.parseINI testDataSection
 let testParse3 () = run INIReader.INIParser.parseINI testDataFailure
 
 
+let data = INIParser.read testData10 ;;
+
+
+// type myType = ('a -> option 'b) -> list 'a -> option (list 'b)
 
