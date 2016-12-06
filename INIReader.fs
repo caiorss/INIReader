@@ -22,8 +22,62 @@ module INIAst =
     type INIData = Map<string, Map<INIKey,INIValue>>
 
 
+module INIExtr =
+    open INIAst
 
-    (* ===========================  Primitive Parsers  ================================== *)
+    let getINIString: INIValue -> string option =
+        function
+        | INIString x -> Some x
+        | _           -> None
+
+    let getINITuple: INIValue -> (INIValue list) option =
+        function 
+        | INITuple xs -> Some xs
+        | _           -> None
+
+    let getINIList: INIValue -> (INIValue list) option =
+        function 
+        | INIList xs -> Some xs
+        | _          -> None
+
+    let isINIString: INIValue -> bool =
+        function
+        | INIString _ -> true
+        | _           -> false 
+
+    let isINITuple: INIValue -> bool =
+        function
+        | INITuple _ -> true
+        | _          -> false
+
+
+    let isINIList: INIValue -> bool =
+        function
+        | INIList _ -> true
+        | _         -> false 
+        
+    let isINIEmpty: INIValue -> bool =
+        function
+        | INIEmpty -> true
+        | _        -> false
+
+    // let sequence : ('a  option) list -> (list 'a) option =
+    //     fun optlist -> 
+        
+    let fieldKV: string -> string -> INIData -> INIValue option =
+        fun section key ast -> ast |> Map.tryFind section
+                                   |> Option.bind (Map.tryFind key)                                  
+
+    let fieldString: string -> string -> INIData -> string option =
+        fun section key ->  fieldKV section key >> Option.bind getINIString
+
+        
+    // let getFieldString: string -> string -> INIData -> string option =
+    //     fun section key ast -> ast |> Map.tryFind section
+    //                                |> Option.bind (Map.tryFind key)
+    //                                |> Option.bind getINIString
+
+(* ===========  Primitive Parser  =========== *)
 
 module internal PrimitiveParsers =
     open INIAst 
@@ -119,9 +173,3 @@ module INIParser =
     let read2opt: string -> INIData option =
         fun s -> extractOption parseINI s 
 
-    
-                  
-// [<EntryPoint>]
-// let main argv =
-//     printfn "Started"
-//     0
