@@ -1,14 +1,10 @@
-#if INTERACTIVE
-#I "packages/FParsec.1.0.2/lib/net40-client" 
-#r "FParsec.dll" 
-#r "FParsecCS.dll"
-#endif 
-
 namespace INIReader 
 
 open System
-open FParsec 
+open FParsec
 
+/// Abstract Syntax Tree of a INI file.
+///    
 module INIAst = 
 
     type INIKey = string
@@ -21,7 +17,8 @@ module INIAst =
 
     type INIData = Map<string, Map<INIKey,INIValue>>
 
-
+///  Module to extract data from AST - Abstract Syntax Tree 
+///   
 module INIExtr =
     open INIAst
 
@@ -63,6 +60,20 @@ module INIExtr =
 
     // let sequence : ('a  option) list -> (list 'a) option =
     //     fun optlist -> 
+
+
+    let sequence mlist =
+      let (>>=) = fun ma f -> Option.bind f ma 
+      let unit x  = Option.Some x  
+      let mcons p q =
+        p >>= fun x ->
+        q >>= fun y ->
+        unit (x::y)  
+      List.foldBack mcons mlist (unit [])
+
+    let applySequence fn xs =
+        sequence <| List.map fn xs 
+    
         
     let fieldKV: string -> string -> INIData -> INIValue option =
         fun section key ast -> ast |> Map.tryFind section
@@ -71,14 +82,41 @@ module INIExtr =
     let fieldString: string -> string -> INIData -> string option =
         fun section key ->  fieldKV section key >> Option.bind getINIString
 
-        
-    // let getFieldString: string -> string -> INIData -> string option =
-    //     fun section key ast -> ast |> Map.tryFind section
-    //                                |> Option.bind (Map.tryFind key)
-    //                                |> Option.bind getINIString
+    /// Extracts a list of strings from an INI ast.
+    ///
+    /// ##Parameters 
+    ///
+    /// - `section` - Section to be extracted from the AST.
+    /// - `key`     - key within the section to be extracted.
+    ///
+    let fieldListOfString (section: string) (key: string) ast =
+        let (>>=) ma fn = Option.bind fn ma 
+        ast
+        |> fieldKV section key
+        >>= getINIList
+        >>= applySequence getINIString
+
+    let fieldTupleOfString (section: string) (key: string) ast =
+        let (>>=) ma fn = Option.bind fn ma 
+        ast
+        |> fieldKV section key
+        >>= getINITuple
+        >>= applySequence getINIString        
+
+    let fieldListOfTuples (section: string) (key: string) ast =
+       let (>>=) ma fn = Option.bind fn ma
+
+       fieldKV section key ast 
+       >>= getINIList
+       >>= applySequence (fun v -> getINITuple v
+                                   >>= applySequence getINIString
+                              )      
 
 (* ===========  Primitive Parser  =========== *)
 
+
+/// Primitive Parser
+///    
 module internal PrimitiveParsers =
     open INIAst 
 
@@ -159,7 +197,8 @@ module internal PrimitiveParsers =
     let parseSection<'T> :  Parser<(string * Map<string, INIValue>),'T> =
         betweenSquareBrackets identifier .>>. (many (skipMany comment >>. parseKV .>> spaces) |>> Map.ofList)
 
-
+/// High Level parser for INI files.
+///     
 module INIParser =
     // open FParsec
     open INIAst 
@@ -172,4 +211,3 @@ module INIParser =
 
     let read2opt: string -> INIData option =
         fun s -> extractOption parseINI s 
-
