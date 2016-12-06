@@ -19,7 +19,7 @@
   </metadata>
 
   <files>
-    <file src="bin/INIReader.dll" target="lib" />
+    <file src="bin/Debug/INIReader.dll" target="lib/net45" />
     <file src="README.org" target="" />
   </files>
 </package>
