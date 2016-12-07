@@ -114,7 +114,17 @@ module INIParser =
         fun s -> extractFail parseINI s 
 
     let read2opt: string -> INIData option =
-        fun s -> extractOption parseINI s 
+        fun s -> extractOption parseINI s
+
+    let read2res text = run parseINI text     
+
+    let readFile: string -> INIData option =
+        fun fname -> let text = System.IO.File.ReadAllText(fname)
+                     in  read2opt text 
+
+    let readFile2res fname =
+        let text = System.IO.File.ReadAllText(fname)
+        in read2res text 
 
 ///  Module to extract data from AST - Abstract Syntax Tree 
 ///   
