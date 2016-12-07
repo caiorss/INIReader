@@ -49,11 +49,15 @@ module internal PrimitiveParsers =
                                           ||  ch = '['
                                           ||  ch = ','
                                           ||  ch = ';'
+                                          ||  ch = '='
                                           )
                       ) s
 
 
-    let parseQuoted<'T> : Parser<string,'T> =  pchar '"' >>. manySatisfy (fun c -> c <> '"') .>> pchar '"'
+    let parseQuoted<'T> : Parser<string,'T> =
+        pchar '"'
+        >>. manySatisfy (fun c -> c <> '"')
+        .>> pchar '"'
 
     let extractFail p str =
         match run p str with
@@ -99,7 +103,9 @@ module internal PrimitiveParsers =
 
     
     let parseSection<'T> :  Parser<(string * Map<string, INIValue>),'T> =
-        betweenSquareBrackets identifier .>>. (many (skipMany comment >>. parseKV .>> spaces) |>> Map.ofList)
+        betweenSquareBrackets identifier
+        .>>. (many (skipMany comment >>. parseKV .>> spaces)
+              |>> Map.ofList)
 
 /// High Level parser for INI files.
 ///     
