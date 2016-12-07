@@ -137,6 +137,18 @@ module INIParser =
 module INIExtr =
     open INIAst
 
+
+    type MaybeBuilder() =
+        member this.Bind(ma, f) =
+            match ma with
+            | Some(a)    -> f a
+            | _          -> None
+        member this.Delay(f) = f()
+        member this.Return(x) = Some x
+
+    let maybe = new MaybeBuilder()
+
+
     let getINIString: INIValue -> string option =
         function
         | INIString x -> Some x
