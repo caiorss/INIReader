@@ -116,14 +116,20 @@ module INIParser =
        
     let parseINI<'T> : Parser<INIData, 'T> =   many parseSection |>> Map.ofList
 
+    /// Reads an INI AST from a string throwing an exception if it fails to parse. 
+    ///
     let read: string -> INIData =
         fun s -> extractFail parseINI s 
 
+    /// Reads an INI AST from a string returning None if it fails to parse. 
+    ///  
     let read2opt: string -> INIData option =
         fun s -> extractOption parseINI s
-
+        
     let read2res text = run parseINI text     
 
+    /// Read an INI AST from a file, returning None if it fails to parse. 
+    ///  
     let readFile: string -> INIData option =
         fun fname -> let text = System.IO.File.ReadAllText(fname)
                      in  read2opt text 
