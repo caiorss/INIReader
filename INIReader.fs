@@ -95,7 +95,7 @@ module internal PrimitiveParsers =
 
 
     let parseKV<'T> : Parser<string * INIValue, 'T> =
-        identifier .>> wstr "=" .>>. parseINIValue
+        anyText2 .>> wstr "=" .>>. parseINIValue
 
     
     let parseSection<'T> :  Parser<(string * Map<string, INIValue>),'T> =
