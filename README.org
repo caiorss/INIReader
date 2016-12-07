@@ -1,10 +1,11 @@
-#+TITLE: Iniparser for F# and .NET
-#+DESCRIPTION: Parser for INI-like configuration files. 
-#+KEYWORDS: F# fsharp parser INI ini configuration lightweight
+#+TITLE: Ini file configuration parser for F# and .NET
+#+DESCRIPTION: Ini configuration parser for F# and .NET
+#+KEYWORDS: F# fsharp parser INI ini configuration lightweight FParsec
 #+AUTHOR: Caio Rodrigues 
+#+EMAIL:  caiorss <dot> <rodrigues> <at> gmail <dot> com
 #+STARTUP: content
 
-* Iniparser 
+* IniReader
 ** Overview 
    :PROPERTIES:
    :ID:       44e76a54-0cc9-4343-b2c7-39c86eb781b3
@@ -22,11 +23,6 @@ This package provides a parser for INI configuration files and
 functions to extract data in a safe and seamless manner from INI
 files. 
 
-** Usage
-
-Iniparser is a F# parser built with FParsec for a INI-like
-configuration files of syntax like this:
-
 
 See also: 
 
@@ -38,6 +34,10 @@ See also:
 
  - [[http://softwareengineering.stackexchange.com/questions/144238/ini-files-or-registry-or-personal-files][windows - INI files or Registry or personal files? - Software Engineering Stack Exchange]]
 
+** Usage
+
+Iniparser is a F# parser built with FParsec for a INI-like
+configuration files of syntax like this:
 
 #+BEGIN_SRC conf :tangle files/serverConfig.cfg
 [server]
@@ -76,9 +76,7 @@ Load references:
 #r "FParsec.dll" 
 #r "FParsecCS.dll"
 
-#load "INIReader.fs"
-// or 
-// #r "bin/obj/INIReader.dll"
+#r "bin/obj/INIReader.dll"
 #+END_SRC
 
 Parse configuration file to AST - Abstract Syntax Tree:
