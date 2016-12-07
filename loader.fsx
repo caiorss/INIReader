@@ -73,9 +73,9 @@ let testParse1 () = run INIReader.INIParser.parseINI testData10
 let testParse2 () = run INIReader.INIParser.parseINI testDataSection
 let testParse3 () = run INIReader.INIParser.parseINI testDataFailure
 
+let testReader1 () = INIReader.INIParser.read testData10
 
 let data = INIParser.read testData10 ;;
 
 
 // type myType = ('a -> option 'b) -> list 'a -> option (list 'b)
-
