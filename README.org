@@ -1,7 +1,8 @@
-#+TITLE: Iniparser 
+#+TITLE: Iniparser for F# and .NET
 #+DESCRIPTION: Parser for INI-like configuration files. 
 #+KEYWORDS: F# fsharp parser INI ini configuration lightweight
 #+AUTHOR: Caio Rodrigues 
+#+STARTUP: content
 
 * Iniparser 
 ** Overview 
@@ -9,17 +10,33 @@
    :ID:       44e76a54-0cc9-4343-b2c7-39c86eb781b3
    :END:
 
-Motivation: 
+*Motivation*
 
 The ini configuration format popularized by Windows is more
 human-readable, lightweight and simple than json, XML or YAML for
 storing initialization configuration or simple settings like server
 port, server host, directories paths, database drivers, database
-server hostname and other options.
+server hostname and other options. 
 
+This package provides a parser for INI configuration files and
+functions to extract data in a safe and seamless manner from INI
+files. 
+
+** Usage
 
 Iniparser is a F# parser built with FParsec for a INI-like
 configuration files of syntax like this:
+
+
+See also: 
+
+ - [[https://en.wikipedia.org/wiki/INI_file][INI file - Wikipedia]]
+
+ - [[https://www.ibm.com/support/knowledgecenter/en/SSPK3V_7.0.0/com.ibm.swg.im.soliddb.admin.doc/doc/rules.for.formatting.the.solid.ini.file.html][IBM Knowledge Center - Rules for formatting the solid.ini file]]
+
+ - [[http://stackoverflow.com/questions/1243345/what-is-the-best-file-format-for-configuration-file][php - What is the best file format for configuration file? - Stack Overflow]]
+
+ - [[http://softwareengineering.stackexchange.com/questions/144238/ini-files-or-registry-or-personal-files][windows - INI files or Registry or personal files? - Software Engineering Stack Exchange]]
 
 
 #+BEGIN_SRC conf :tangle files/serverConfig.cfg
@@ -173,23 +190,77 @@ Etracting data using Maybe (Option Monad), "Workflow syntax" in F#:
 
 #+END_SRC
 
+** Functions and Modules
+*** Module INIReader.INIAst
 
-See also: 
+The module _INIReader.INIAst_ contains the Abstract syntax tree of an
+INI file. 
 
- - [[https://en.wikipedia.org/wiki/INI_file][INI file - Wikipedia]]
+#+BEGIN_SRC fsharp 
+  /// Abstract Syntax Tree of a INI file.
+  ///    
+  module INIAst = 
 
- - [[https://www.ibm.com/support/knowledgecenter/en/SSPK3V_7.0.0/com.ibm.swg.im.soliddb.admin.doc/doc/rules.for.formatting.the.solid.ini.file.html][IBM Knowledge Center - Rules for formatting the solid.ini file]]
+      type INIKey = string
 
- - [[http://stackoverflow.com/questions/1243345/what-is-the-best-file-format-for-configuration-file][php - What is the best file format for configuration file? - Stack Overflow]]
+      type INIValue =
+          | INIString of string
+          | INITuple  of INIValue list 
+          | INIList   of INIValue list
+          | INIEmpty 
 
- - [[http://softwareengineering.stackexchange.com/questions/144238/ini-files-or-registry-or-personal-files][windows - INI files or Registry or personal files? - Software Engineering Stack Exchange]]
+      type INIData = Map<string, Map<INIKey,INIValue>>
+#+END_SRC
 
+*** Module INIReader.INIParser 
+
+The module _INIreader.INIParser_ contains functions to parse INI
+formatted strings from files or strings to INI AST (INIData). 
+
+|              |                                                   |                                                              |
+|--------------+---------------------------------------------------+--------------------------------------------------------------|
+| read         | s:string -> INIAst.INIData                        | Read an INI from a string, trowing an exception if it fails. |
+| read2opt     | s:string -> INIAst.INIData option                 | Read an INI from a string, returning None if it fails.       |
+| read2res     | text:string -> ParserResult<INIAst.INIData,unit>  | Read an INI rom a strig,  returning a parser result.         |
+| readFile     | fname:string -> INIAst.INIData option             | Read an INI file returning a None if it fails.               |
+| readFile2res | fname:string -> ParserResult<INIAst.INIData,unit> | Read an INI file returning a parser result.                  |
+|              |                                                   |                                                              |
+
+*** Module INIReader.INIExtr 
+
+The module INIReader.INIExtr provides functions which extracts data
+INIAst data structures. 
+
+|                    |                                                                        |                                                       |
+|--------------------+------------------------------------------------------------------------+-------------------------------------------------------|
+| *Assessors*        | Extracts data from INIValue                                            |                                                       |
+|                    |                                                                        |                                                       |
+| getINIString       | INIValue -> string option                                              | Extracts: INIString <string>                          |
+| getINITuple        | INIValue -> INIValue list option                                       | Extracts: INITtuple [e0, e1, e2 ...]                  |
+| getINIList         | INIValue -> INIValue list option                                       | Extracts: INIList   [e0, e1, e2 ...] -> [e0, e1, ...] |
+|                    |                                                                        |                                                       |
+|                    |                                                                        |                                                       |
+| *Predicates*       |                                                                        |                                                       |
+|                    |                                                                        |                                                       |
+| isINIString        | INIValue -> bool                                                       |                                                       |
+| isINITuple         | INIValue -> bool                                                       |                                                       |
+| isINIList          | INIValue -> bool                                                       |                                                       |
+| isINIEmpty         | INIValue -> bool                                                       |                                                       |
+|                    |                                                                        |                                                       |
+| *Extractors*       | Functions to extract data from INIData                                 |                                                       |
+|                    |                                                                        |                                                       |
+| fieldKV            | section:string -> key:string -> ast:INIData -> INIValue option         | Extracts an INI valu.e                                |
+| fieldString        | section:string -> key:string -> (INIData -> string option)             | Extracts an INI string.                               |
+| fieldListOfString  | section:string -> key:string -> ast:INIData -> string list option      | Extracts an INI list of strings from a INIList.       |
+| fieldTupleOfString | section:string -> key:string -> ast:INIData -> string list option      | Extracts a tuple of INIStrings                        |
+| fieldListOfTuples  | section:string -> key:string -> ast:INIData -> string list list option | Extracts a list of INITuples of INIStrings.           |
+|                    |                                                                        |                                                       |
 
 ** Build 
 ** Tests 
 ** TODO List 
 
- - [] Improve documentation
+ - [x] Improve documentation
  - [x] Add example files
  - [] Add tests
  - [] Publish package
