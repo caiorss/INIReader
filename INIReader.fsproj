@@ -55,10 +55,14 @@
     
   </ItemGroup>
 
+<!-- Files to be Compiled  -->
+  
   <ItemGroup>
     <Compile Include="INIReader.fs" />
     <None Include="Script.fsx" />
   </ItemGroup>
+
+  
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
   </PropertyGroup>
