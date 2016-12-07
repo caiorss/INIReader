@@ -1,24 +1,41 @@
 #+TITLE: Iniparser 
+#+DESCRIPTION: Parser for INI-like configuration files. 
+#+KEYWORDS: F# fsharp parser INI ini configuration lightweight
 
 * Iniparser 
 ** Overview 
+   :PROPERTIES:
+   :ID:       44e76a54-0cc9-4343-b2c7-39c86eb781b3
+   :END:
 
 Motivation: 
 
-The ini configuration format popularized by Windows is more human
-readable and simple to write and read than XML and is more suitable
-to write simple configuration like server configuration, deployment
-settings and Unix-like configuration files. 
+The ini configuration format popularized by Windows is more
+human-readable, lightweight and simple to than json, XML or YAML for
+storing initialization configuration or simple settings like server
+port, server host, directories paths, database drivers, database
+server hostname and other options.
 
 
-Iniparser is a parser for a ini-like configuration file of syntax: 
+Iniparser is a parser for a INI-like configuration files of syntax
+like this: 
 
-#+BEGIN_SRC conf 
+
+#+BEGIN_SRC conf :tangle files/serverConfig.cfg
 [server]
-host = 0.0.0.0 # host the server will listen to.
-port = 8080 
-path = /home/arch/data 
-name = "John McArthur"
+# host the server will listen to.
+host = 0.0.0.0          # it will listen to any host
+port = 8080             # server port 
+path = /home/arch/data  
+
+name = "John McArthur"  # User name 
+role = admin 
+
+[window]
+width       = 600
+height      = 350
+position.x  = 400
+position.y  = 200
 
 [references]
 # commentary 
@@ -29,8 +46,163 @@ values = [10 20 30 40]
 target = net45
 
 tuple = (10 hello 20.100.200 "hello world")
-
-emptyField = 
 #+END_SRC 
+
+
+*Example in the repl*
+
+Load references: 
+
+#+BEGIN_SRC fsharp 
+#I "packages/FParsec.1.0.2/lib/net40-client" 
+#r "FParsec.dll" 
+#r "FParsecCS.dll"
+
+#load "INIReader.fs"
+// or 
+// #r "bin/obj/INIReader.dll"
+#+END_SRC
+
+Parse configuration file to AST - Abstract Syntax Tree:
+
+#+BEGIN_SRC fsharp 
+  > let ast = INIParser.readFile "files/serverConfig.cfg" ;;
+
+  val ast : INIAst.INIData option =
+    Some
+      (map
+         [("references",
+           map
+             [("dependencies",
+               INIList
+                 [INITuple [INIString "Nuget.Core"; INIString "10.23"];
+                  INITuple [INIString "FParsec"; INIString "0.945"]]);
+              ("target", INIString "net45");
+              ("tuple",
+               INITuple
+                 [INIString "10"; INIString "hello"; INIString "20.100.200";
+                  INIString "hello world"]);
+              ("values",
+               INIList
+                 [INIString "10"; INIString "20"; INIString "30"; INIString "40"])]);
+          ("server",
+           map
+             [("host", INIString "0.0.0.0"); ("name", INIString "John McArthur");
+              ("path", INIString "/home/arch/data"); ("port", INIString "8080");
+              ("role", INIString "admin")]);
+          ("window",
+           map
+             [("height", INIString "350"); ("position.x", INIString "400");
+              ("position.y", INIString "200"); ("width", INIString "600")])])
+
+#+END_SRC
+
+
+Extracting data from ast:
+
+#+BEGIN_SRC fsharp 
+  > let ast2 = Option.get ast ;;
+
+  > INIExtr.fieldKV "window" "height" ast2 ;;
+  val it : INIAst.INIValue option = Some (INIString "350")
+
+  > INIExtr.fieldKV "window" "heightsadas" ast2 ;;
+  val it : INIAst.INIValue option = None
+  >
+
+  ast |> Option.bind (INIExtr.fieldKV "window" "height")  ;;
+  val it : INIAst.INIValue option = Some (INIString "350")
+
+
+  > ast |> Option.bind (INIExtr.fieldString "window" "height")  ;;
+  val it : string option = Some "350"
+
+  > ast |> Option.bind (INIExtr.fieldString "window" "position.x")  ;;
+  val it : string option = Some "400"
+
+
+  > ast |> Option.bind (INIExtr.fieldString "window" "position.y")  ;;
+  val it : string option = Some "200"
+  >
+
+
+  > let host = ast |> Option.bind (INIExtr.fieldString "server" "host")  ;;
+
+  val host : string option = Some "0.0.0.0"
+
+  > ast |> Option.bind (INIExtr.fieldString "server" "name")  ;;
+  val it : string option = Some "John McArthur"
+
+
+  > ast |> Option.bind (INIExtr.fieldListOfTuples "references" "dependencies")  ;;
+  val it : string list list option =
+    Some [["Nuget.Core"; "10.23"]; ["FParsec"; "0.945"]]
+  > > 
+
+  > ast |> Option.bind (INIExtr.fieldListOfString "references" "values")  ;;
+  val it : string list option = Some ["10"; "20"; "30"; "40"]
+  >
+
+  > ast |> Option.bind (INIExtr.fieldTupleOfString "references" "tuple")  ;;
+  val it : string list option =
+    Some ["10"; "hello"; "20.100.200"; "hello world"]
+  > > 
+
+
+  let getServerData someAst =
+      let (>>=) = fun ma fn -> Option.bind fn ma
+
+      someAst
+      >>= fun ast  ->  INIExtr.fieldString "server" "host" ast 
+      >>= fun host ->  INIExtr.fieldString "server" "port" ast 
+      >>= fun port ->  INIExtr.fieldString "server" "path" ast 
+      >>= fun path ->  Some (host, port, path)
+
+#+END_SRC
+
+Etracting data using Maybe (Option Monad), "Workflow syntax" in F#: 
+
+#+BEGIN_SRC fsharp 
+  let getServerData someAst =    
+      INIExtr.maybe {
+          let! ast    = someAst
+          let! host   = INIExtr.fieldString "server" "host" ast 
+          let! port   = INIExtr.fieldString "server" "port" ast 
+          let! path   = INIExtr.fieldString "server" "path" ast
+          return (host, port, path)
+          }
+
+  val getServerData :
+    someAst:INIAst.INIData option -> (string * string * string) option
+
+  > getServerData ast ;;
+  val it : (string * string * string) option =
+    Some ("0.0.0.0", "8080", "/home/arch/data")
+  > 
+
+#+END_SRC
+
+
+See also: 
+
+ - [[https://en.wikipedia.org/wiki/INI_file][INI file - Wikipedia]]
+
+ - [[https://www.ibm.com/support/knowledgecenter/en/SSPK3V_7.0.0/com.ibm.swg.im.soliddb.admin.doc/doc/rules.for.formatting.the.solid.ini.file.html][IBM Knowledge Center - Rules for formatting the solid.ini file]]
+
+ - [[http://stackoverflow.com/questions/1243345/what-is-the-best-file-format-for-configuration-file][php - What is the best file format for configuration file? - Stack Overflow]]
+
+ - [[http://softwareengineering.stackexchange.com/questions/144238/ini-files-or-registry-or-personal-files][windows - INI files or Registry or personal files? - Software Engineering Stack Exchange]]
+
+
+** Build 
+** Tests 
+** TODO List 
+
+ - [] Improve documentation
+ - [] Add example files
+ - [] Add tests
+ - [] Publish package
+ - [] Generate html documentation
+ - [] Add to Github Repository
 
 
