@@ -1,6 +1,7 @@
 #+TITLE: Iniparser 
 #+DESCRIPTION: Parser for INI-like configuration files. 
 #+KEYWORDS: F# fsharp parser INI ini configuration lightweight
+#+AUTHOR: Caio Rodrigues 
 
 * Iniparser 
 ** Overview 
@@ -11,14 +12,14 @@
 Motivation: 
 
 The ini configuration format popularized by Windows is more
-human-readable, lightweight and simple to than json, XML or YAML for
+human-readable, lightweight and simple than json, XML or YAML for
 storing initialization configuration or simple settings like server
 port, server host, directories paths, database drivers, database
 server hostname and other options.
 
 
-Iniparser is a parser for a INI-like configuration files of syntax
-like this: 
+Iniparser is a F# parser built with FParsec for a INI-like
+configuration files of syntax like this:
 
 
 #+BEGIN_SRC conf :tangle files/serverConfig.cfg
@@ -148,16 +149,6 @@ Extracting data from ast:
     Some ["10"; "hello"; "20.100.200"; "hello world"]
   > > 
 
-
-  let getServerData someAst =
-      let (>>=) = fun ma fn -> Option.bind fn ma
-
-      someAst
-      >>= fun ast  ->  INIExtr.fieldString "server" "host" ast 
-      >>= fun host ->  INIExtr.fieldString "server" "port" ast 
-      >>= fun port ->  INIExtr.fieldString "server" "path" ast 
-      >>= fun path ->  Some (host, port, path)
-
 #+END_SRC
 
 Etracting data using Maybe (Option Monad), "Workflow syntax" in F#: 
@@ -199,10 +190,11 @@ See also:
 ** TODO List 
 
  - [] Improve documentation
- - [] Add example files
+ - [x] Add example files
  - [] Add tests
  - [] Publish package
  - [] Generate html documentation
  - [] Add to Github Repository
+ - [] Add binary-release branch 
 
 
