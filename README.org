@@ -1,0 +1,6 @@
+* Binary Release
+
+ - File: https://raw.githubusercontent.com/caiorss/INIReader/release/INIReader.1.0.0.nupkg
+
+
+
