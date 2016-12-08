@@ -10,3 +10,4 @@ packages/*
 *.nupkg
 bin/*
 obj/*
+tests/packages/*
