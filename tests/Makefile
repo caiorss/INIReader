@@ -1,0 +1,68 @@
+# =====  User Options ============== #
+
+
+PLATFORM := anycpu
+TYPE     := library
+src      := iniparserTest.fs
+
+FSC = fsc
+
+NUNIT := packages/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe
+
+# Object code that will be generated
+obj := iniparserTest.dll
+
+
+# List of directories where are the .NET assemblies (*.dll files)
+INCLUDES   :=    ../bin/Debug
+
+# Dll files to be included
+ASSEMBLIES := ../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll    \
+		  	  ../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll  \
+		  	  packages/FsUnit.2.3.2/lib/net45/FsUnit.NUnit.dll             \
+			  packages/NUnit.3.5.0/lib/net45/nunit.framework.dll          \
+			  ../bin/Debug/INIReader.dll
+
+
+#======= Don't Change ============ #
+
+# Output directory with compiled code
+BIN := bin
+
+target := $(BIN)/$(obj)
+
+
+
+#===========  Rules ===================#
+
+all: $(target)
+
+## Install dependencies
+## 
+$(NUNIT): 
+	 nuget.exe install NUnit.Runners  -OutputDirectory packages -Prerelease -NoCache
+	 nuget.exe install NUnit          -OutputDirectory packages -Prerelease -NoCache
+	 nuget.exe install FsUnit         -OutputDirectory packages -Prerelease -NoCache 
+
+nunit: $(NUNIT)
+
+
+$(target): $(src) nunit
+	$(FSC) $(src) --platform:$(PLATFORM) \
+               --target:$(TYPE) --out:$(target) \
+               $(addprefix -r:, $(ASSEMBLIES))
+
+	cp -v $(ASSEMBLIES) $(BIN)
+
+
+## Run the unit tests
+## 
+test: nunit  $(target) 
+	cd ./bin && ../$(NUNIT) iniparserTest.dll 
+
+clean:
+	rm -rf bin/*
+
+## Clean all binary files and packages
+clean-all:
+	rm -rf bin/* packages/* 
