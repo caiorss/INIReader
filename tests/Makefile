@@ -7,7 +7,7 @@ src      := iniparserTest.fs
 
 FSC = fsc
 
-NUNIT := packages/NUnit.ConsoleRunner.3.5.0/tools/nunit3-console.exe
+NUNIT := packages/NUnit.ConsoleRunner/tools/nunit3-console.exe
 
 # Object code that will be generated
 obj := iniparserTest.dll
@@ -19,8 +19,8 @@ INCLUDES   :=    ../bin/Debug
 # Dll files to be included
 ASSEMBLIES := ../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll    \
 		  	  ../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll  \
-		  	  packages/FsUnit.2.3.2/lib/net45/FsUnit.NUnit.dll             \
-			  packages/NUnit.3.5.0/lib/net45/nunit.framework.dll          \
+		  	  packages/FsUnit/lib/net45/FsUnit.NUnit.dll             \
+			  packages/NUnit/lib/net45/nunit.framework.dll          \
 			  ../bin/Debug/INIReader.dll
 
 
@@ -40,9 +40,9 @@ all: $(target)
 ## Install dependencies
 ## 
 $(NUNIT): 
-	 nuget.exe install NUnit.Runners  -OutputDirectory packages -Prerelease -NoCache
-	 nuget.exe install NUnit          -OutputDirectory packages -Prerelease -NoCache
-	 nuget.exe install FsUnit         -OutputDirectory packages -Prerelease -NoCache 
+	 nuget.exe install NUnit.Runners  -OutputDirectory packages -ExcludeVersion -Prerelease 
+	 nuget.exe install NUnit          -OutputDirectory packages -ExcludeVersion -Prerelease 
+	 nuget.exe install FsUnit         -OutputDirectory packages -ExcludeVersion -Prerelease 
 
 nunit: $(NUNIT)
 
