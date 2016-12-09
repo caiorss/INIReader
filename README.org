@@ -255,6 +255,121 @@ INIAst data structures.
 |                    |                                                                        |                                                       |
 
 ** Build 
+
+Run =$ make deps= to install dependencies to ./packages 
+
+#+BEGIN_SRC sh
+  $ make deps
+  nuget.exe install FParsec -OutputDirectory packages -Version 1.0.2
+  Feeds used:
+    /home/arch/.local/share/NuGet/Cache
+    /home/arch/.nuget/packages/
+    https://api.nuget.org/v3/index.json
+
+  Attempting to gather dependency information for package 'FParsec.1.0.2' with respect to project 'packages', targeting 'Any,Version=v0.0'
+  Attempting to resolve dependencies for package 'FParsec.1.0.2' with DependencyBehavior 'Lowest'
+  Resolving actions to install package 'FParsec.1.0.2'
+  Resolved actions to install package 'FParsec.1.0.2'
+  Adding package 'FParsec.1.0.2' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/packages'
+  Added package 'FParsec.1.0.2' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/packages'
+  Successfully installed 'FParsec 1.0.2' to packages
+#+END_SRC
+
+Run =$ xbuild= to build the INIReader.dll. 
+
+#+BEGIN_SRC sh
+  $ xbuild
+  XBuild Engine Version 14.0
+  Mono, Version 4.6.1.0
+  Copyright (C) 2005-2013 Various Mono authors
+
+  Build started 12/8/2016 11:30:50 PM.
+  __________________________________________________
+  Project "/run/media/arch/transfer/projects/iniparser.fsharp/INIReader.fsproj" (default target(s)):
+      Target PrepareForBuild:
+          Configuration: Debug Platform: AnyCPU
+      Target CopyFilesMarkedCopyLocal:
+          Copying file from '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll' to '/run/media/arch/transfer/projects/iniparser.fsharp/bin/Debug/FParsecCS.dll'
+          Copying file from '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client/FParsec.dll' to '/run/media/arch/transfer/projects/iniparser.fsharp/bin/Debug/FParsec.dll'
+
+#+END_SRC
+
+Run =$ make loader= to load the dll into the REPL. 
+
+#+BEGIN_SRC sh 
+  $ make loader 
+  fsi --use:loader.fsx
+
+  F# Interactive for F# 4.1
+  Freely distributed under the Apache 2.0 Open Source License
+
+  For help type #help;;
+
+  > 
+  --> Added '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client' to library include path
+
+
+  --> Referenced '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client/FParsec.dll' (file may be locked by F# Interactive process)
+
+
+  --> Referenced '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll' (file may be locked by F# Interactive process)
+
+
+  --> Referenced '/run/media/arch/transfer/projects/iniparser.fsharp/bin/Debug/INIReader.dll' (file may be locked by F# Interactive process)
+
+  Binding session to '/run/media/arch/transfer/projects/iniparser.fsharp/packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll'...
+
+  ...
+
+  al testData1 : string = "hosts = 192.168.12 "
+  val testData2 : string =
+    "refs = [(Nuget.Core, 1.12), (Fsharp.Charting, 1.23)]"
+  val testData3 : string = "mydata = ["hello world", something, nothing, 2000]"
+  val testParse1 :
+    unit -> FParsec.CharParsers.ParserResult<INIReader.INIAst.INIData,unit>
+  val testParse2 :
+    unit -> FParsec.CharParsers.ParserResult<INIReader.INIAst.INIData,unit>
+  val testParse3 :
+    unit -> FParsec.CharParsers.ParserResult<INIReader.INIAst.INIData,unit>
+  val testReader1 : unit -> INIReader.INIAst.INIData
+  val data : INIReader.INIAst.INIData =
+    map
+      [("INFO",
+        map
+          [("email", INIString "mrdude@gmail.com");
+           ("name", INIString "mr dude")]);
+       ("PROJECT",
+        map
+          [("atuple",
+            INITuple
+              [INIString "100"; INIString "hello world"; INIString "eggs";
+               INIString "nuts"; INIString "milk"; INIString "shake"]);
+           ("empty", INIEmpty); ("framework", INIString "net45");
+           ("names",
+            INIList
+              [INIString "package1"; INIString "package10.2";
+               INIString "package 100"; INIString "300"; INIString "500"]);
+           ("projectName", INIString "helloWorld");
+           ("references",
+            INIList
+              [INITuple [INIString "NuGet.Core"; INIString "0.9.1"];
+               INITuple [INIString "FParsec"; INIString "1.0.2"];
+               INITuple [INIString "OxyPlot"; INIString "_"]]);
+           ("target", INIString "exe"); ("version", INIString "1.2.3")])]
+
+#+END_SRC
+
+Build a NuGet package:
+
+ - =$ make pkg=
+
+#+BEGIN_SRC sh
+  $ make pkg
+  nuget pack INIReader.nuspec -OutputDirectory ./release
+  Attempting to build package from 'INIReader.nuspec'.
+  Successfully created package './release/INIReader.1.0.0.nupkg'.
+#+END_SRC
+
 ** Tests 
 ** TODO List 
 
