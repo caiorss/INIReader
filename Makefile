@@ -63,15 +63,10 @@ deps:
 loader: all
 	fsi --use:loader.fsx
 
-<<<<<<< Updated upstream
+
 # Make Nuget package 
 pkg: 
 	nuget pack INIReader.nuspec -OutputDirectory ./release
-=======
-# Make Nuget package
-pkg:
-	nuget pack Package.nuspec
->>>>>>> Stashed changes
 
 # Show Nuget package
 pkg-show:
