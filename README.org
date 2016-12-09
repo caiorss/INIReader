@@ -8,7 +8,22 @@
 
 Install package from Github at local repositor (./packages)
 
-  [[file:DownloadInireader.sh]]
+To install this package download and run the script:
+[[file:DownloadInireader.sh]] with: 
+
+#+BEGIN_SRC sh
+$ mkdir -p test && cd test 
+$ curl -O https://raw.githubusercontent.com/caiorss/INIReader/release/DownloadInireader.sh 
+$ sh DownloadInireader.sh 
+#+END_SRC
+
+or one-liner installer.
+
+#+BEGIN_SRC sh 
+$ mkdir -p test && cd test && curl https://raw.githubusercontent.com/caiorss/INIReader/release/DownloadInireader.sh | sh -
+#+END_SRC
+
+File:  [[file:DownloadInireader.sh]]
 
 #+BEGIN_SRC sh :tangle ./DownloadInireader.sh :shebang #!/usr/bin/env sh  
   pkgurl=https://raw.githubusercontent.com/caiorss/INIReader/release/INIReader.1.0.0.nupkg 
@@ -19,7 +34,7 @@ Install package from Github at local repositor (./packages)
   nuget.exe install INIReader -Source $(pwd) -o ./packages -ExcludeVersion
 #+END_SRC
 
-Load packagel:
+*Load package in REPL:*
 
  - =$ fsi=
 
