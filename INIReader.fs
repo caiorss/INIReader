@@ -143,7 +143,8 @@ module INIParser =
 module INIExtr =
     open INIAst
 
-
+    let (>>=) ma fn = Option.bind fn ma
+    
     type MaybeBuilder() =
         member this.Bind(ma, f) =
             match ma with
@@ -215,6 +216,12 @@ module INIExtr =
     let fieldString: string -> string -> INIData -> string option =
         fun section key ->  fieldKV section key >> Option.bind getINIString
 
+
+    // let fieldInt section key ast =
+    //     fieldString section key ast
+    //     |> Option.map    
+        
+
     /// Extracts a list of strings from an INI ast.
     ///
     /// ##Parameters 
@@ -222,25 +229,23 @@ module INIExtr =
     /// - `section` - Section to be extracted from the AST.
     /// - `key`     - key within the section to be extracted.
     ///
-    let fieldListOfString (section: string) (key: string) ast =
-        let (>>=) ma fn = Option.bind fn ma 
+    let fieldListOfString (section: string) (key: string) ast =        
         ast
         |> fieldKV section key
         >>= getINIList
         >>= applySequence getINIString
 
     let fieldTupleOfString (section: string) (key: string) ast =
-        let (>>=) ma fn = Option.bind fn ma 
         ast
         |> fieldKV section key
         >>= getINITuple
         >>= applySequence getINIString        
 
     let fieldListOfTuples (section: string) (key: string) ast =
-       let (>>=) ma fn = Option.bind fn ma
-
        fieldKV section key ast 
        >>= getINIList
        >>= applySequence (fun v -> getINITuple v
                                    >>= applySequence getINIString
                               )     
+
+     
