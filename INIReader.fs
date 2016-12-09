@@ -155,6 +155,20 @@ module INIExtr =
 
     let maybe = new MaybeBuilder()
 
+    let private parseInt (s: string): int option =
+        try Some (System.Int32.Parse s) 
+        with 
+          :? System.FormatException -> None
+
+    let private parseBool (s: string): bool option =
+        try Some (System.Boolean.Parse s) 
+        with 
+          :? System.FormatException -> None
+
+    let private parseDouble (s: string): float option =
+        try Some (System.Double.Parse s) 
+        with 
+          :? System.FormatException -> None         
 
     let getINIString: INIValue -> string option =
         function
@@ -216,12 +230,15 @@ module INIExtr =
     let fieldString: string -> string -> INIData -> string option =
         fun section key ->  fieldKV section key
                             >> Option.bind getINIString
+                            
+    let fieldInt section key ast =
+        fieldString section key ast >>= parseInt    
 
+    let fieldDouble section key ast =
+        fieldString section key ast >>= parseDouble     
 
-    // let fieldInt section key ast =
-    //     fieldString section key ast
-    //     |> Option.map    
-        
+    let fieldBool section key ast =
+        fieldString section key ast >>= parseBool            
 
     /// Extracts a list of strings from an INI ast.
     ///
