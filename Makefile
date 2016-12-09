@@ -14,6 +14,8 @@ ASSEMBLIES := FParsec.dll FParsecCS.dll
 # List of directories where are the .NET assemblies (*.dll files)
 INCLUDES   := packages/FParsec.1.0.2/lib/net40-client
 
+PKGURL := https://raw.githubusercontent.com/caiorss/INIReader/release/INIReader.1.0.0.nupkg
+
 #-------------------------------------#
 
 
@@ -50,7 +52,7 @@ loader: all
 
 # Make Nuget package 
 pkg: 
-	nuget pack Package.nuspec
+	nuget pack INIReader.nuspec -OutputDirectory ./release
 
 # Show Nuget package 
 pkg-show: 
@@ -63,6 +65,9 @@ pkg-install:
 pkg-install-local:
 	nuget.exe install INIReader -Source ${CURDIR} -o ~/nuget
 
+pkg-install-github:
+	curl -O -L $(PKGURL)
+	nuget.exe install INIReader -Source $(shell pwd) -o ./packages
 
 pkg-rm:
 	rm -rf packages/INIReader.1.0.0
