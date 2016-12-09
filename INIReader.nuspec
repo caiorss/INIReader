@@ -16,7 +16,7 @@
     <tags>parser FParsec ini reader</tags>
 
     <dependencies>
-      <dependency id="FParsec" version="(1.0.2,)" />
+      <dependency id="FParsec" version="1.0.2" />
     </dependencies>  
     
   </metadata>
