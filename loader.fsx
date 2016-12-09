@@ -5,8 +5,9 @@
 #r "FParsec.dll" 
 #r "FParsecCS.dll"
 
-// #r "bin/INIReader.dll"
-#load "INIReader.fs" 
+#r "bin/Debug/INIReader.dll"
+
+// #load "INIReader.fs" 
 
 open FParsec
 open INIReader
