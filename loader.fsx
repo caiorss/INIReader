@@ -5,12 +5,12 @@
 #r "FParsec.dll" 
 #r "FParsecCS.dll"
 
-#r "bin/Debug/INIReader.dll"
+#r "bin/Debug/FS.INIReader.dll"
 
 // #load "INIReader.fs" 
 
 open FParsec
-open INIReader
+open FS.INIReader
 
 
 let testDataSection = """
@@ -70,11 +70,11 @@ let testData3 = "mydata = [\"hello world\", something, nothing, 2000]"
 
 
 
-let testParse1 () = run INIReader.INIParser.parseINI testData10 
-let testParse2 () = run INIReader.INIParser.parseINI testDataSection
-let testParse3 () = run INIReader.INIParser.parseINI testDataFailure
+let testParse1 () = run INIParser.parseINI testData10 
+let testParse2 () = run INIParser.parseINI testDataSection
+let testParse3 () = run INIParser.parseINI testDataFailure
 
-let testReader1 () = INIReader.INIParser.read testData10
+let testReader1 () = INIParser.read testData10
 
 let data = INIParser.read testData10 ;;
 

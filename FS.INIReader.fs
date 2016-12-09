@@ -1,4 +1,4 @@
-namespace INIReader 
+namespace FS.INIReader 
 
 open System
 open FParsec

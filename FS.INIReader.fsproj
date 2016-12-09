@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4ade9fbb-c064-4fcf-aada-1be8802bb393</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>INIReader</RootNamespace>
-    <AssemblyName>INIReader</AssemblyName>
+    <RootNamespace>FS.INIReader</RootNamespace>
+    <AssemblyName>FS.INIReader</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
@@ -58,7 +58,7 @@
 <!-- Files to be Compiled  -->
   
   <ItemGroup>
-    <Compile Include="INIReader.fs" />
+    <Compile Include="FS.INIReader.fs" />
     <None Include="Script.fsx" />
   </ItemGroup>
 

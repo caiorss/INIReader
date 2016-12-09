@@ -60,13 +60,13 @@ deps:
 	$(NUGET) install FParsec -OutputDirectory packages -Version 1.0.2
 
 # Loads the library in the interactive shell
-loader: all
+loader: 
 	fsi --use:loader.fsx
 
 
 # Make Nuget package 
 pkg: 
-	nuget pack INIReader.nuspec -OutputDirectory ./release
+	nuget pack FS.INIReader.nuspec -OutputDirectory ./release
 
 # Show Nuget package
 pkg-show:

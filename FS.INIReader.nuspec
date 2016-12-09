@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>INIReader</id>
+    <id>FS.INIReader</id>
+    <title>FS.INIReader - INI Parser library.</title>
     <version>1.0.3</version>
     <authors>Caio Rodrigues</authors>
     <owners>Caio Rodrigues</owners>
@@ -10,7 +11,12 @@
     <projectUrl>https://github.com/caiorss/INIReader</projectUrl>
     <!-- <iconUrl>http://www.dummy.com.br/icon.ico</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Parser for simple configuration INI files.</description>
+    <summary>Parser to read INI configuration files for F# and .NET</summary>
+
+    <description>Parser to read INI configuration files. This file format
+    is less verbose to load initialization configuration such as database connections,
+    server ports, ids and paths.</description>
+
     <releaseNotes>First realease of this package</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>parser FParsec ini reader</tags>
@@ -22,9 +28,10 @@
   </metadata>
 
   <files>
-    <file src="bin/Debug/INIReader.dll" target="lib/net45" />
-    <file src="bin/Debug/INIReader.XML" target="lib/net45" />
-    <file src="bin/Debug/INIReader.dll.mdb" target="lib/net45" />        
+    <file src="bin/Debug/FS.INIReader.dll" target="lib/net45" />
+    <file src="bin/Debug/FS.INIReader.XML" target="lib/net45" />
+    <file src="bin/Debug/FS.INIReader.dll.mdb" target="lib/net45" />        
     <file src="README.org" target="" />
+    <file src="README.html" target="" />    
   </files>
 </package>

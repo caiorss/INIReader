@@ -1,11 +1,11 @@
-#+TITLE: Ini file configuration parser for F# and .NET
+#+TITLE: FS.INIReader - Ini-file configuration parser for F# and .NET
 #+DESCRIPTION: Ini configuration parser for F# and .NET
 #+KEYWORDS: F# fsharp parser INI ini configuration lightweight FParsec
 #+AUTHOR: Caio Rodrigues 
 #+EMAIL:  caiorss <dot> <rodrigues> <at> gmail <dot> com
 #+STARTUP: content
 
-* IniReader
+* FS.INIReader
 ** Overview 
    :PROPERTIES:
    :ID:       44e76a54-0cc9-4343-b2c7-39c86eb781b3
@@ -189,9 +189,9 @@ Etracting data using Maybe (Option Monad), "Workflow syntax" in F#:
 #+END_SRC
 
 ** Functions and Modules
-*** Module INIReader.INIAst
+*** Module FS.INIReader.INIAst
 
-The module _INIReader.INIAst_ contains the Abstract syntax tree of an
+The module _FS.INIReader.INIAst_ contains the Abstract syntax tree of an
 INI file. 
 
 #+BEGIN_SRC fsharp 
@@ -210,7 +210,7 @@ INI file.
       type INIData = Map<string, Map<INIKey,INIValue>>
 #+END_SRC
 
-*** Module INIReader.INIParser 
+*** Module FS.INIReader.INIParser 
 
 The module _INIreader.INIParser_ contains functions to parse INI
 formatted strings from files or strings to INI AST (INIData). 
@@ -224,7 +224,7 @@ formatted strings from files or strings to INI AST (INIData).
 | readFile2res | fname:string -> ParserResult<INIAst.INIData,unit> | Read an INI file returning a parser result.                  |
 |              |                                                   |                                                              |
 
-*** Module INIReader.INIExtr 
+*** Module FS.INIReader.INIExtr 
 
 The module INIReader.INIExtr provides functions which extracts data
 INIAst data structures. 
