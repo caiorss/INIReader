@@ -5,17 +5,20 @@
     <version>1.0.0</version>
     <authors>Caio Rodrigues</authors>
     <owners>Caio Rodrigues</owners>
+    <language>en-US</language>    
     <!-- <licenseUrl>http://www.bsdlicence.com</licenseUrl> -->
-    <!-- <projectUrl>http://www.dummy.com.br</projectUrl> -->
+    <projectUrl>https://github.com/caiorss/INIReader</projectUrl>
     <!-- <iconUrl>http://www.dummy.com.br/icon.ico</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Parser for simple configuration INI files.</description>
     <releaseNotes>First realease of this package</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>parser FParsec ini reader</tags>
+
     <dependencies>
-      <dependency id="FParsec" version="1.0.2" />
-    </dependencies>
+      <dependency id="FParsec" version="(1.0.2,)" />
+    </dependencies>  
+    
   </metadata>
 
   <files>
