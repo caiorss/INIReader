@@ -1,7 +1,55 @@
-* Unit test 
+* Unit testing 
 
 To run the tests use: 
 
  - =$ make test=
 
+#+BEGIN_SRC sh
+  -*- mode: compilation; default-directory: "~/Documents/projects/iniparser.fsharp/tests/" -*-
+  Compilation started at Fri Dec  9 15:29:40
+
+  make test
+  fsc iniparserTest.fs --platform:anycpu \
+                 --target:library --out:bin/iniparserTest.dll \
+                 -r:../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll -r:../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll -r:packages/FsUnit/lib/net45/FsUnit.NUnit.dll -r:packages/NUnit/lib/net45/nunit.framework.dll -r:../bin/Debug/FS.INIReader.dll
+  F# Compiler for F# 4.1
+  Freely distributed under the Apache 2.0 Open Source License
+  cp -v ../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll ../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll packages/FsUnit/lib/net45/FsUnit.NUnit.dll packages/NUnit/lib/net45/nunit.framework.dll ../bin/Debug/FS.INIReader.dll bin
+  '../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll' -> 'bin/FParsec.dll'
+  '../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll' -> 'bin/FParsecCS.dll'
+  'packages/FsUnit/lib/net45/FsUnit.NUnit.dll' -> 'bin/FsUnit.NUnit.dll'
+  'packages/NUnit/lib/net45/nunit.framework.dll' -> 'bin/nunit.framework.dll'
+  '../bin/Debug/FS.INIReader.dll' -> 'bin/FS.INIReader.dll'
+  cd ./bin && ../packages/NUnit.ConsoleRunner/tools/nunit3-console.exe iniparserTest.dll 
+  NUnit Console Runner 3.5.0 
+  Copyright (C) 2016 Charlie Poole
+
+  Runtime Environment
+     OS Version: Linux 4.4.28.2 
+    CLR Version: 4.0.30319.42000
+
+  Test Files
+      iniparserTest.dll
+
+
+  Run Settings
+      DisposeRunners: True
+      WorkDirectory: /run/media/arch/transfer/projects/iniparser.fsharp/tests/bin
+      ImageRuntimeVersion: 4.0.30319
+      ImageRequiresX86: False
+      ImageRequiresDefaultAppDomainAssemblyResolver: False
+      NumberOfTestWorkers: 4
+
+  Test Run Summary
+    Overall result: Passed
+    Test Count: 6, Passed: 6, Failed: 0, Inconclusive: 0, Skipped: 0
+    Start time: 2016-12-09 18:29:47Z
+      End time: 2016-12-09 18:29:47Z
+      Duration: 0.261 seconds
+
+  Results (nunit3) saved as TestResult.xml
+
+  Compilation finished at Fri Dec  9 15:29:47
+
+#+END_SRC
 

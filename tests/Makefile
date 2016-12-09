@@ -21,7 +21,7 @@ ASSEMBLIES := ../packages/FParsec.1.0.2/lib/net40-client/FParsec.dll    \
 		  	  ../packages/FParsec.1.0.2/lib/net40-client/FParsecCS.dll  \
 		  	  packages/FsUnit/lib/net45/FsUnit.NUnit.dll             \
 			  packages/NUnit/lib/net45/nunit.framework.dll          \
-			  ../bin/Debug/INIReader.dll
+			  ../bin/Debug/FS.INIReader.dll
 
 
 #======= Don't Change ============ #

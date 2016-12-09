@@ -2,7 +2,7 @@ module IniParserTest
   
 open NUnit.Framework
 open FsUnit
-open INIReader 
+open FS.INIReader 
 
 let inidata = """
 [server]
