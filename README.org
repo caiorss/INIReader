@@ -260,10 +260,10 @@ INIAst data structures.
 
  - [x] Improve documentation
  - [x] Add example files
- - [] Add tests
+ - [x] Add tests
  - [] Publish package
  - [] Generate html documentation
- - [] Add to Github Repository
- - [] Add binary-release branch 
+ - [x] Add to Github Repository
+ - [x] Add binary-release branch 
 
 
