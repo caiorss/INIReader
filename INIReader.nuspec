@@ -2,11 +2,11 @@
 <package >
   <metadata>
     <id>INIReader</id>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
     <authors>Caio Rodrigues</authors>
     <owners>Caio Rodrigues</owners>
     <language>en-US</language>    
-    <!-- <licenseUrl>http://www.bsdlicence.com</licenseUrl> -->
+    <licenseUrl>https://raw.githubusercontent.com/caiorss/INIReader/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/caiorss/INIReader</projectUrl>
     <!-- <iconUrl>http://www.dummy.com.br/icon.ico</iconUrl> -->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
