@@ -214,7 +214,8 @@ module INIExtr =
                                    |> Option.bind (Map.tryFind key)                                  
 
     let fieldString: string -> string -> INIData -> string option =
-        fun section key ->  fieldKV section key >> Option.bind getINIString
+        fun section key ->  fieldKV section key
+                            >> Option.bind getINIString
 
 
     // let fieldInt section key ast =
