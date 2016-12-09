@@ -1,6 +1,108 @@
 * Binary Release
+  :PROPERTIES:
+  :ID:       39d7fd39-8280-4648-95c0-8182f7301df4
+  :END:
 
  - File: https://raw.githubusercontent.com/caiorss/INIReader/release/INIReader.1.0.0.nupkg
 
 
+Install package from Github at local repositor (./packages)
 
+  [[file:DownloadInireader.sh]]
+
+#+BEGIN_SRC sh :tangle ./DownloadInireader.sh :shebang #!/usr/bin/env sh  
+  pkgurl=https://raw.githubusercontent.com/caiorss/INIReader/release/INIReader.1.0.0.nupkg 
+
+  curl -O -L $pkgurl
+
+  nuget.exe install FParsec -Version 1.0.2   -o ./packages -ExcludeVersion
+  nuget.exe install INIReader -Source $(pwd) -o ./packages -ExcludeVersion
+#+END_SRC
+
+Load packagel:
+
+ - =$ fsi=
+
+#+BEGIN_SRC fsharp 
+  #r "packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsecCS.dll"
+  #r "packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsec.dll"
+  #r "packages/INIReader/lib/net45/INIReader.dll"
+
+  > open INIReader ;;
+  > 
+  - INIParser.read ;;
+  val it : (string -> INIAst.INIData) = <fun:it@7>
+  > 
+  - INIParser.read2opt ;;
+  val it : (string -> INIAst.INIData option) = <fun:it@9-1>
+  > 
+  - INIParser.readFile ;  
+  - ;;
+  val it : (string -> INIAst.INIData option) = <fun:it@11-2>
+  > 
+
+  - INIExtr.fieldString ;;
+  val it : (string -> string -> INIAst.INIData -> string option) = <fun:it@19-5>
+  > 
+  - INIExtr.fieldListOfString ;;
+  val it : (string -> string -> INIAst.INIData -> string list option) =
+   
+  > 
+
+  let testData = """
+  [user]
+  name = "John Coltrane"
+  id   = 78445
+  path = /home/john/data/storage
+
+  [packages]
+  packs = [ (FSharp.Data 10.0) (Deedle 20.0) ]
+  target = exe
+  framework = net45
+
+  """
+
+  > let ast = INIParser.read2opt testData ;;
+  Binding session to '/run/media/arch/transfer/projects/iniparser.fsharp/release/packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsecCS.dll'...
+  Binding session to '/run/media/arch/transfer/projects/iniparser.fsharp/release/packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsec.dll'...
+
+  val ast : INIAst.INIData option =
+    Some
+      (map
+         [("packages",
+           map
+             [("framework", INIString "net45");
+              ("packs",
+               INIList
+                 [INITuple [INIString "FSharp.Data"; INIString "10.0"];
+                  INITuple [INIString "Deedle"; INIString "20.0"]]);
+              ("target", INIString "exe")]);
+          ("user",
+           map
+             [("id", INIString "78445"); ("name", INIString "John Coltrane");
+              ("path", INIString "/home/john/data/storage")])])
+
+  > 
+  - 
+
+  - let (>>=) ma fn = Option.bind fn ma ;;
+
+  val ( >>= ) : ma:'a option -> fn:('a -> 'b option) -> 'b option
+
+  > ast |> Option.bind (INIExtr.fieldString "user" "name") ;;
+  val it : string option = Some "John Coltrane"
+  > 
+
+  - ast >>= INIExtr.fieldString "user" "name" ;;  
+  val it : string option = Some "John Coltrane"
+  > 
+
+  - ast >>= INIExtr.fieldString "user" "namsade" ;;
+  val it : string option = None
+  > 
+
+  - ast >>= INIExtr.fieldListOfTuples "packages" "packs" ;; 
+  val it : string list list option =
+    Some [["FSharp.Data"; "10.0"]; ["Deedle"; "20.0"]]
+  > 
+#+END_SRC
