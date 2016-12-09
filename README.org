@@ -11,6 +11,8 @@
    :ID:       44e76a54-0cc9-4343-b2c7-39c86eb781b3
    :END:
 
+It is available at NuGet: - [[https://www.nuget.org/packages/FS.INIReader][NuGet Gallery | FS.INIReader]]
+
 *Motivation*
 
 The ini configuration format popularized by Windows is more
@@ -33,6 +35,170 @@ See also:
  - [[http://stackoverflow.com/questions/1243345/what-is-the-best-file-format-for-configuration-file][php - What is the best file format for configuration file? - Stack Overflow]]
 
  - [[http://softwareengineering.stackexchange.com/questions/144238/ini-files-or-registry-or-personal-files][windows - INI files or Registry or personal files? - Software Engineering Stack Exchange]]
+
+** Install 
+*** Install using Package Manager Console
+
+To install FS.INIReader - INI Parser library., run the following
+command in the Package Manager Console
+
+#+BEGIN_SRC 
+PM> Install-Package FS.INIReader
+#+END_SRC
+
+*** Install using nuget.exe
+
+To install FS.INIReader to ./packages directory without version number
+run the following command in bash.
+
+#+BEGIN_SRC 
+$ nuget.exe install FS.IniReader -OutputDirectory packages -ExcludeVersion
+#+END_SRC
+
+#+BEGIN_SRC sh
+  $ nuget install FS.IniReader -OutputDirectory packages -ExcludeVersion
+  Feeds used:
+    https://api.nuget.org/v3/index.json
+
+    GET https://api.nuget.org/v3/registration1-gz/fs.inireader/index.json
+    OK https://api.nuget.org/v3/registration1-gz/fs.inireader/index.json 313ms
+  Attempting to gather dependency information for package 'FS.IniReader.1.0.3' with respect to project 'packages', targeting 'Any,Version=v0.0'
+  Attempting to resolve dependencies for package 'FS.IniReader.1.0.3' with DependencyBehavior 'Lowest'
+  Resolving actions to install package 'FS.IniReader.1.0.3'
+  Resolved actions to install package 'FS.IniReader.1.0.3'
+  Adding package 'FParsec.1.0.2' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/scratch/packages'
+  Added package 'FParsec.1.0.2' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/scratch/packages'
+  Successfully installed 'FParsec 1.0.2' to packages
+  Adding package 'FS.INIReader.1.0.3' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/scratch/packages'
+  Added package 'FS.INIReader.1.0.3' to folder '/run/media/arch/transfer/projects/iniparser.fsharp/scratch/packages'
+  Successfully installed 'FS.INIReader 1.0.3' to packages
+
+
+
+  $ tree packages/
+  packages/
+  ├── FParsec
+  │   ├── FParsec.nupkg
+  │   └── lib
+  │       ├── net40-client
+  │       │   ├── FParsecCS.dll
+  │       │   ├── FParsecCS.XML
+  │       │   ├── FParsec.dll
+  │       │   └── FParsec.XML
+  │       └── portable-net45+netcore45+wpa81+wp8
+  │           ├── FParsecCS.dll
+  │           ├── FParsecCS.XML
+  │           ├── FParsec.dll
+  │           └── FParsec.XML
+  └── FS.INIReader
+      ├── FS.INIReader.nupkg
+      ├── lib
+      │   └── net45
+      │       ├── FS.INIReader.dll
+      │       ├── FS.INIReader.dll.mdb
+      │       └── FS.INIReader.XML
+      ├── README.html
+      └── README.org
+
+  7 directories, 15 files
+#+END_SRC
+
+*** Playing with the package 
+
+#+BEGIN_SRC fsharp
+  #r "packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsec.dll" 
+  #r "packages/FParsec/lib/portable-net45+netcore45+wpa81+wp8/FParsecCS.dll" 
+  #r "packages/FS.INIReader/lib/net45/FS.INIReader.dll"
+  ;;   
+
+  > open FS.INIReader ;;
+  > 
+
+
+  let iniString = """
+  [project]
+
+  output = bin/file.dll 
+
+  target = library 
+
+  sources = [ file.fs file2.fs file3.fs fileNx3.fs] 
+
+  standalone = false 
+
+  platform = anycpu 
+
+  packages = [ (FParsec 1.0.2) (FSharp.Data 2.0.3)]
+
+  staticlink = [ FParsec FParseCS]
+
+  framework = net45
+
+  index = 100
+
+  """
+
+
+  - let ast = INIParser.read iniString ;;
+
+  val ast : INIAst.INIData =
+    map
+      [("project",
+        map
+          [("framework", INIString "net45"); ("index", INIString "100");
+           ("output", INIString "bin/file.dll");
+           ("packages",
+            INIList
+              [INITuple [INIString "FParsec"; INIString "1.0.2"];
+               INITuple [INIString "FSharp.Data"; INIString "2.0.3"]]);
+           ("platform", INIString "anycpu");
+           ("sources",
+            INIList
+              [INIString "file.fs"; INIString "file2.fs"; INIString "file3.fs";
+               INIString "fileNx3.fs"]); ("standalone", INIString "false");
+           ("staticlink", INIList [INIString "FParsec"; INIString "FParseCS"]);
+           ("target", INIString "library")])]
+
+
+
+  //  Extract strings 
+  //   
+  - ast |> INIExtr.fieldString "project" "platform"  ;;
+  val it : string option = Some "anycpu"
+  > 
+
+  - ast |> INIExtr.fieldString "project" "framework"  ;;
+  val it : string option = Some "net45"
+  > 
+
+  > INIExtr.fieldString "project" "output" ast ;;
+  val it : string option = Some "bin/file.dll"
+  >
+
+  //  Extract List of Tuples 
+  //     
+  - INIExtr.fieldListOfString "project" "sources" ast ;;
+  val it : string list option =
+    Some ["file.fs"; "file2.fs"; "file3.fs"; "fileNx3.fs"]
+  > 
+
+  // Extract a index field
+  //    
+  - INIExtr.fieldInt "project" "index" ast ;;
+  val it : int option = Some 100
+  > 
+
+  // Extract list of tuples 
+  //  
+  > let packages = INIExtr.fieldListOfTuples "project" "packages" ast ;;
+
+  val packages : string list list option =
+    Some [["FParsec"; "1.0.2"]; ["FSharp.Data"; "2.0.3"]]
+
+  > 
+
+      
+#+END_SRC
 
 ** Usage
 
@@ -76,7 +242,7 @@ Load references:
 #r "FParsec.dll" 
 #r "FParsecCS.dll"
 
-#r "bin/obj/INIReader.dll"
+#r "bin/obj/FS.INIReader.dll"
 #+END_SRC
 
 Parse configuration file to AST - Abstract Syntax Tree:
